@@ -7,6 +7,7 @@ var cloud = require ('./cloud');
 var control = require ('./control');
 var rele = require('./rele');
 var botones = require('./botones');
+var lowPower = require('./low_power');
 let tiempoMedida=10000;
 let tiempoControl=15000;
 
@@ -21,6 +22,8 @@ var enviado=false;
 
 var primerControl=true;
 var userAutenticado=null;
+
+var listaConfiguracion=[];
 
 /* Callback despues de la medida */
 function medidasCallback(err,temp,hum){
@@ -122,6 +125,7 @@ function controlTemperatura(){
 }
 
 function manejadorControl(snapshot){
+    lowPower.setNormalPower();
     console.log(snapshot.val());
     control.setControl(snapshot.val());
     estado.setObjetivo(snapshot.val().automatico.temperatura);
@@ -133,10 +137,25 @@ function manejadorControl(snapshot){
 
 }
 
+function manejadorConfiguration(snapshot){
+    console.log("Configuracion: Nueva configuracion");
+    listaConfiguracion=[];
+    snapshot.forEach(function(child){
+        var item = child.val();
+        listaConfiguracion.push(item);
+    })
+    
+    console.log("Conf: Se leyeron: ", listaConfiguracion.length);
+    console.log(listaConfiguracion);
+        
+    
+}
+
 function manejadorAuth(user){
     if (user){
         console.log("Auth correcta...ponemos manejadores");
         cloud.manejadorControl(manejadorControl);
+        cloud.manejadorConfiguracion(manejadorConfiguration);
         userAutenticado=user;
     }else{
         userAutenticado=null;
@@ -146,6 +165,10 @@ function manejadorAuth(user){
 function manejadorBoton6(err,value){
     var aux=control.automatico.temperatura;
     console.log("Pulsamos el + " + aux);
+    if (lowPower.estado===0){
+        lowPower.setNormalPower();
+        return;
+    }
     control.setTemperatura(aux+1);
     estado.setObjetivo(aux+1);
     pantalla.pintaTemperaturaObjetivo(aux+1);
@@ -156,6 +179,10 @@ function manejadorBoton6(err,value){
 function manejadorBoton5(err,value){
     var aux=control.automatico.temperatura;
     console.log("Pulsamos el - " + aux);
+    if (lowPower.estado===0){
+        lowPower.setNormalPower();
+        return;
+    }
     control.setTemperatura(aux-1);
     estado.setObjetivo(aux-1);
     pantalla.pintaTemperaturaObjetivo(aux-1);
@@ -163,10 +190,16 @@ function manejadorBoton5(err,value){
     cloud.escribeEstado(estado.estado);
 }
 
-/* Lazo del programa */
+/*
+====================== 
+Main loop de node
+========================
+*/
+
 botones.callbackBotones(manejadorBoton5,manejadorBoton6);
 cloud.manejaAuth(manejadorAuth);
 
+lowPower.configureLowPower(pantalla.enciendePantalla,pantalla.apagaPantalla);
 
 setTimeout(function(){pantalla.limpiaPantalla()},9500);
 setInterval(function(){medidas.readSensor(medidasCallback)},tiempoMedida);

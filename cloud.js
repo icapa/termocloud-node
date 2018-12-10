@@ -1,13 +1,6 @@
 var firebase = require('firebase');
 var config = require('./config_firebase');
-/*
-var config = {
-    apiKey: "AIzaSyCekjkHVtlbKDrEqJMqDatNRcAg920rld4",
-    authDomain: "termocloud-icapa.firebaseapp.com",
-    databaseURL: "https://termocloud-icapa.firebaseio.com",
-    storageBucket: "termocloud-icapa.appspot.com",
-};
-*/
+
 firebase.initializeApp(config.config);
 
 var database = firebase.database();
@@ -75,4 +68,8 @@ exports.escribeEvento = function(estado,modo,callback){
 
 exports.manejadorControl = function(callback){
     database.ref('00000000bceb13f1/control').on('value',callback);
+}
+
+exports.manejadorConfiguracion = function(callback){
+    database.ref('00000000bceb13f1/conf').on('value',callback);
 }

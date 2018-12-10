@@ -43,3 +43,10 @@ exports.pintaTemperaturaObjetivo=function(temp){
 	oled.setCursor(100,40);
 	oled.writeString(font,2,temp.toFixed(0),1,true);
 }
+
+exports.apagaPantalla =function(){
+	oled.turnOffDisplay();
+}
+exports.enciendePantalla =function(){
+	oled.turnOnDisplay();
+}
