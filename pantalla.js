@@ -13,7 +13,7 @@ oled.writeString(font,2,'Termocloud',1,true);
 
 exports.escribeTemperatura=function(temperatura){
 	oled.setCursor(1,1);
-	oled.writeString(font,8,temperatura.toFixed(0),1,true)
+	oled.writeString(font,5,temperatura.toFixed(0),1,true)
 }
 
 exports.limpiaPantalla=function(){
@@ -28,7 +28,14 @@ exports.pintaCobertura=function(ok){
 	oled.drawLine(124,8,121,8,ok);
 	oled.drawLine(123,10,122,10,ok);
 }
-
+exports.pintaReloj=function(ok){
+	oled.drawLine(113,30,104,30,ok);
+	oled.drawLine(113,20,104,20,ok);
+	oled.drawLine(113,20,113,30,ok);
+	oled.drawLine(104,20,104,30,ok);
+	oled.drawLine(108,25,111,25,ok);
+	oled.drawLine(108,25,108,22,ok);
+}
 exports.pintaEncendido=function(ok){
 	oled.drawLine(127,30,118,30,ok);
 	oled.drawLine(127,29,118,29,ok);

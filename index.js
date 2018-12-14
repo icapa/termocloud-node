@@ -8,8 +8,12 @@ var control = require ('./control');
 var rele = require('./rele');
 var botones = require('./botones');
 var lowPower = require('./low_power');
+var confHoraria = require('./configuracion_horaria');
+var moment = require('moment');
+
 let tiempoMedida=10000;
 let tiempoControl=15000;
+let tiempoConfiguracion=10000;
 
 let minutoEnvio = 30;   // Mandamos datos cada media hora
 
@@ -23,7 +27,7 @@ var enviado=false;
 var primerControl=true;
 var userAutenticado=null;
 
-var listaConfiguracion=[];
+
 
 /* Callback despues de la medida */
 function medidasCallback(err,temp,hum){
@@ -69,8 +73,6 @@ function medidasCallback(err,temp,hum){
                     enviado=true;
                 }
                 });
-
-
             }
         }
         else{
@@ -123,6 +125,31 @@ function controlTemperatura(){
     pantalla.pintaTemperaturaObjetivo(objetivo);
 
 }
+function controlConfiguracion(){
+    var ahora = moment();
+    var dia = ahora.isoWeekday();
+    console.log("Control Configuracion");
+    console.log("\tEstamos a dia de semana:");
+    console.log(dia,ahora.minutes());
+    var registro=confHoraria.coincideElDia(ahora);
+    if (registro!==null){
+        pantalla.pintaReloj(1);
+        var estaba=confHoraria.activoElRegistro(registro);
+        if (estaba===true){
+            console.log("\tMandamos la orden");
+            console.log(registro);
+            control.setModo(registro.estadoForm);
+            control.setTemperatura(parseInt(registro.temperatura,10));
+            cloud.escribeControl(control,function(error){console.log(error)});
+        }else{
+            console.log("\tYa estaba la orden hecha");
+        }
+    }
+    else{
+        pantalla.pintaReloj(0);
+        console.log("\t*** YA NO HAY ORDENES ***");
+    }
+}
 
 function manejadorControl(snapshot){
     lowPower.setNormalPower();
@@ -134,20 +161,18 @@ function manejadorControl(snapshot){
         cloud.escribeEstado(estado.estado,function(error){console.log(error)});
     }
     primerControl=false;
-
 }
 
 function manejadorConfiguration(snapshot){
     console.log("Configuracion: Nueva configuracion");
-    listaConfiguracion=[];
+    var listaConfiguracion=[];
     snapshot.forEach(function(child){
         var item = child.val();
         listaConfiguracion.push(item);
     })
-    
-    console.log("Conf: Se leyeron: ", listaConfiguracion.length);
-    console.log(listaConfiguracion);
-        
+    confHoraria.actualizaConfiguracion(listaConfiguracion);
+
+    console.log("Configuracion horaria: \t Se leyeron: ", confHoraria.listaConfiguracion.length);
     
 }
 
@@ -211,3 +236,7 @@ setInterval(function(){
         pantalla.pintaCobertura(0);
     }
 },5000)
+setTimeout(function(){
+    setInterval(function(){controlConfiguracion()},tiempoConfiguracion);
+},20000);
+
