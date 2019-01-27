@@ -105,14 +105,14 @@ function controlTemperatura(){
         }
     }else if (control.modo==='automatico'){
         console.log('Control automatico: temperatura: ' + control.automatico.temperatura);
-        if (actual>=objetivo){
+        if (actual>objetivo){
             if (encendido!==0){
                 console.log('Apagamos y mandamos evento...');
                 estado.setEncendido(0,rele.estadoRele);
                 cloud.escribeEvento(estado.estado,control.modo,function(error){console.log(error)});
                 cloud.escribeEstado(estado.estado,function(error){console.log(error)});
             }
-        }else{
+        }else if(actual<objetivo){
             if (encendido!==1){
                 console.log('Encendemos y mandamos evento...');
                 estado.setEncendido(1,rele.estadoRele);
