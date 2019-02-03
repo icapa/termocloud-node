@@ -1,5 +1,5 @@
 var moment = require('moment');
-const dias=['D','L','M','X','J','V','S'];
+const dias=['L','M','X','J','V','S','D'];
 
 /* Funciones internas al modulos */
 function coincideElDia(ahora,registro){
@@ -7,10 +7,10 @@ function coincideElDia(ahora,registro){
     //console.log(registro);
     var pilloDia=false;
     dias.forEach((element,index) => {
-        //console.log("Elemento:", element, index)
+        //console.log("Elemento:", element, index+1)
         //console.log(registro[element]);  
         if (registro[element]===true){
-            if (ahora.isoWeekday()===index){
+            if (ahora.isoWeekday()===index+1){
                 pilloDia=true;
             }
         }  
