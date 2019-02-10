@@ -136,16 +136,24 @@ function controlConfiguracion(){
         pantalla.pintaReloj(1);
         var estaba=confHoraria.activoElRegistro(registro);
         if (estaba===true){
-            console.log("\tMandamos la orden");
+            console.log("\tMandamos la orden, el id es", registro.id);
             console.log(registro);
             control.setModo(registro.estadoForm);
             control.setTemperatura(parseInt(registro.temperatura,10));
+            console.log("CAMBIAMOS ESTADOOOOO: ",registro.id);
+            estado.setRegistro(registro.id);
+            
             cloud.escribeControl(control,function(error){console.log(error)});
+            cloud.escribeEstado(estado.estado,function(error){console.log(error)});
         }else{
             console.log("\tYa estaba la orden hecha");
         }
     }
     else{
+        if (estado.estado.registro!==''){
+            estado.setRegistro('');
+            cloud.escribeEstado(estado.estado,function(error){console.log(error)});
+        }
         pantalla.pintaReloj(0);
         console.log("\t*** YA NO HAY ORDENES ***");
     }

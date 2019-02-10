@@ -5,7 +5,9 @@ module.exports = {
 		encendido:-1,
 		temperatura:-1,
 		fecha:'',
-		temperaturaObjetivo:-1
+		temperaturaObjetivo:-1,
+		registro:''
+
 
 	},
 
@@ -24,6 +26,12 @@ module.exports = {
 		this.estado.encendido=encendido;
 		this.estado.fecha = moment().format();
 		callback(encendido);
+	},
+
+	setRegistro:function(id){
+		
+		this.estado.registro=id;
+		console.log("Estado: Cambiando registro id",this.estado);
 	}
 
 

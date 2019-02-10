@@ -28,7 +28,8 @@ exports.escribeEstado = function(estado,callback){
             encendido: estado.encendido,
             temperatura: estado.temperatura,
             fecha: estado.fecha,
-            temperaturaObjetivo: estado.temperaturaObjetivo
+            temperaturaObjetivo: estado.temperaturaObjetivo,
+            registro: estado.registro
         },callback)
 }
 exports.escribeControl = function(control,callback){
