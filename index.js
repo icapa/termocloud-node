@@ -122,7 +122,8 @@ function controlTemperatura(){
         }
     }
     pantalla.pintaEncendido(estado.estado.encendido);
-    pantalla.pintaTemperaturaObjetivo(objetivo);
+	pantalla.pintaTemperaturaObjetivo(objetivo);
+	pantalla.pintaModo(control.modo);
 
 }
 function controlConfiguracion(){

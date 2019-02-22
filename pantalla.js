@@ -50,6 +50,18 @@ exports.pintaTemperaturaObjetivo=function(temp){
 	oled.setCursor(100,40);
 	oled.writeString(font,2,temp.toFixed(0),1,true);
 }
+exports.pintaModo=function(modo){
+	oled.setCursor(1,40);
+	oled.fillRect(1,40,64,64,0);
+	if (modo==='automatico'){
+		oled.writeString(font,2,"auto",1,true);
+	}else if (modo==='on'){
+		oled.writeString(font,2," on ",1,true);
+	}
+	else{
+		oled.writeString(font,2," off",1,true);	
+	}
+}
 
 exports.apagaPantalla =function(){
 	oled.turnOffDisplay();
